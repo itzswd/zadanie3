@@ -23,7 +23,7 @@ function checkAdminAuth() {
         window.location.href = 'index.html';
         return;
     }
-    document.getElementById('admin-name-display').textContent = user.name;
+    const nameEl = document.getElementById('admin-name-display'); if (nameEl) nameEl.textContent = user.name;
 
     const navManager = document.getElementById('nav-manager-link');
     if (navManager) navManager.style.display = (user.role === 'manager') ? 'inline-block' : 'none';

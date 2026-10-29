@@ -15,7 +15,7 @@ function checkManagerAuth() {
         window.location.href = 'index.html';
         return;
     }
-    document.getElementById('manager-name-display').textContent = user.name;
+    const nameEl = document.getElementById('manager-name-display'); if (nameEl) nameEl.textContent = user.name;
 
     const navAdmin = document.getElementById('nav-admin-link');
     if (navAdmin) navAdmin.style.display = (user.role === 'admin') ? 'inline-block' : 'none';
