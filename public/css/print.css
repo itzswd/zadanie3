@@ -1,0 +1,109 @@
+
+
+#print-area {
+    display: none;
+}
+
+@media print {
+    body * {
+        visibility: hidden !important;
+    }
+
+    #print-area, #print-area * {
+        visibility: visible !important;
+    }
+
+    #print-area {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        color: #000000 !important;
+        background: #ffffff !important;
+        padding: 20mm;
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 11pt;
+        line-height: 1.4;
+    }
+
+    .contract-header {
+        text-align: center;
+        border-bottom: 2px solid #000;
+        padding-bottom: 12px;
+        margin-bottom: 16px;
+    }
+
+    .contract-title {
+        font-size: 14pt;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+
+    .contract-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 14px;
+        font-size: 10pt;
+    }
+
+    .contract-parties {
+        margin-bottom: 16px;
+        font-size: 10.5pt;
+    }
+
+    .contract-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 14px 0;
+    }
+
+    .contract-table th, .contract-table td {
+        border: 1px solid #000;
+        padding: 6px 10px;
+        text-align: left;
+        font-size: 10pt;
+    }
+
+    .contract-table th {
+        background: #f0f0f0 !important;
+        font-weight: bold;
+    }
+
+    .contract-terms {
+        font-size: 9.5pt;
+        margin: 14px 0;
+        text-align: justify;
+    }
+
+    .contract-terms p {
+        margin-bottom: 6px;
+    }
+
+    .contract-signatures {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 36px;
+        page-break-inside: avoid;
+    }
+
+    .sign-col {
+        width: 45%;
+    }
+
+    .sign-line {
+        border-bottom: 1px solid #000;
+        height: 35px;
+        margin-bottom: 4px;
+    }
+
+    .barcode-box {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .barcode-svg {
+        height: 45px;
+    }
+}

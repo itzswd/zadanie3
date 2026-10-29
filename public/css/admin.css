@@ -1,0 +1,208 @@
+
+
+.dashboard-section {
+    padding: 40px 0 48px;
+}
+
+.dashboard-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+}
+
+.dashboard-head h1 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.kpi-card {
+    background: var(--glass-panel);
+    border: var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    border-left: 3px solid var(--border-glass);
+    transition: var(--transition);
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.kpi-card.emerald { border-left-color: var(--accent-emerald); }
+.kpi-card.cyan { border-left-color: var(--accent-cyan); }
+.kpi-card.amber { border-left-color: var(--accent-amber); }
+.kpi-card.rose { border-left-color: var(--accent-rose); }
+.kpi-card.sky { border-left-color: #38bdf8; }
+
+.kpi-info .kpi-label {
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+
+.kpi-info .kpi-value {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-top: 4px;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.chart-card {
+    background: var(--glass-panel);
+    border: var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+}
+
+.chart-card h3 {
+    font-family: var(--font-heading);
+    font-size: 0.98rem;
+    margin-bottom: 14px;
+}
+
+.chart-container {
+    position: relative;
+    height: 250px;
+    width: 100%;
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.tab-btn {
+    padding: 8px 18px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    border-radius: var(--radius-pill);
+    transition: var(--transition);
+}
+
+.tab-btn:hover {
+    color: var(--text-primary);
+    background: var(--glass-bg-hover);
+}
+
+.tab-btn.active {
+    color: #ffffff;
+    background: var(--accent-emerald);
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.table-card {
+    background: var(--glass-panel);
+    border: var(--border-glass);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+.table-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    gap: 12px;
+}
+
+.data-table-wrap {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.84rem;
+}
+
+.data-table th {
+    background: rgba(0, 0, 0, 0.35);
+    padding: 10px 16px;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.data-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: var(--text-secondary);
+    vertical-align: middle;
+}
+
+.data-table tr:hover td {
+    background: var(--glass-bg-hover);
+    color: var(--text-primary);
+}
+
+.fine-calc-box {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-top: 14px;
+}
+
+.fine-calc-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 0.84rem;
+}
+
+.fine-calc-total {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 6px;
+    padding-top: 8px;
+    font-weight: 700;
+    font-size: 0.98rem;
+}
+
+@media (max-width: 800px) {
+    .charts-grid { grid-template-columns: 1fr; }
+}

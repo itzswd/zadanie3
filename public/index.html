@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RENTPRO — Прокат оборудования</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/print.css">
+</head>
+<body>
+
+    
+    <div class="navbar-wrap">
+        <header class="navbar">
+            <a href="index.html" class="logo">
+                <span class="logo-text">RENT<span>PRO</span></span>
+            </a>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#catalog" class="active">Каталог</a></li>
+                    <li><a href="#calculator">Калькулятор</a></li>
+                    <li id="nav-manager-link" style="display: none;"><a href="manager.html">Менеджер</a></li>
+                    <li id="nav-admin-link" style="display: none;"><a href="admin.html">Админ-панель</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions" id="nav-auth">
+                <button onclick="openModal('auth-modal')" class="btn btn-auth btn-sm">Вход / Регистрация</button>
+            </div>
+        </header>
+    </div>
+
+    
+    <section class="hero">
+        <div class="container">
+            <h1>Прокат профессионального<br><span>оборудования и инвентаря</span></h1>
+
+            
+            <div class="hero-action-bar">
+                <input type="text" id="tracking-number-input" placeholder="Номер заказа (BRN-101)" maxlength="12">
+                <button onclick="handleTrackingSearch()" class="btn btn-secondary btn-sm">Проверить статус</button>
+            </div>
+        </div>
+    </section>
+
+    
+    <section class="calc-section" id="calculator">
+        <div class="container">
+            <div class="calc-card">
+                <div class="calc-header">
+                    <h3>Калькулятор бронирования</h3>
+                    <div id="calc-avail-status" class="status-pill status-active">Проверка доступности</div>
+                </div>
+
+                <div class="calc-grid">
+                    <div class="form-group">
+                        <label>Модель оборудования:</label>
+                        <select id="calc-equipment-select" class="form-control">
+                            
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Дата начала аренды:</label>
+                        <input type="date" id="calc-start-date" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Дата возврата (включительно):</label>
+                        <input type="date" id="calc-end-date" class="form-control">
+                    </div>
+                </div>
+
+                <div class="calc-extras">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="calc-extra-insurance" class="calc-extra-checkbox">
+                        <span>Страховка от повреждений (15% от стоимости)</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="calc-extra-accessories" class="calc-extra-checkbox">
+                        <span>Комплект аксессуаров и защиты (+300 ₽/сут)</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="calc-extra-delivery" class="calc-extra-checkbox">
+                        <span>Доставка до объекта (+700 ₽)</span>
+                    </label>
+                </div>
+
+                <div class="calc-result-bar">
+                    <div class="calc-summary-items">
+                        <div class="calc-summary-item">
+                            <div class="label">Срок</div>
+                            <div class="value" id="calc-days-val">1 дн.</div>
+                        </div>
+                        <div class="calc-summary-item">
+                            <div class="label">Аренда</div>
+                            <div class="value" id="calc-rental-val">0 ₽</div>
+                        </div>
+                        <div class="calc-summary-item">
+                            <div class="label">Залог</div>
+                            <div class="value" id="calc-deposit-val">0 ₽</div>
+                        </div>
+                        <div class="calc-summary-item">
+                            <div class="label">Итого</div>
+                            <div class="value highlight" id="calc-total-val">0 ₽</div>
+                        </div>
+                    </div>
+
+                    <button onclick="handleCalcBookNow()" class="btn btn-primary">
+                        Забронировать
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <section class="catalog-section" id="catalog">
+        <div class="container">
+            <div class="section-head">
+                <h2>Каталог инвентаря</h2>
+                <div class="catalog-toolbar">
+                    <div class="category-chips">
+                        <button class="category-chip active" data-category="Все">Все</button>
+                        <button class="category-chip" data-category="Спортивное">Спортивное</button>
+                        <button class="category-chip" data-category="Туристическое">Туристическое</button>
+                        <button class="category-chip" data-category="Строительное">Строительное</button>
+                    </div>
+                    <input type="text" id="catalog-search-input" class="form-control" style="width: 190px; padding: 6px 10px; font-size: 0.82rem;" placeholder="Поиск по названию...">
+                </div>
+            </div>
+
+            <div class="equipment-grid" id="equipment-grid">
+                
+            </div>
+        </div>
+    </section>
+
+    
+    <footer class="footer">
+        <div class="container" style="text-align: center;">
+            RENTPRO © 2026
+        </div>
+    </footer>
+
+    
+    <div class="modal-overlay" id="booking-modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="book-modal-title">Оформление бронирования</h3>
+                <button class="modal-close" onclick="closeModal('booking-modal')">&times;</button>
+            </div>
+            <form id="booking-form">
+                <div class="modal-body">
+                    <input type="hidden" id="book-eq-id">
+                    <div style="margin-bottom: 14px; color: var(--accent-emerald); font-weight: 600;" id="book-rate-text"></div>
+
+                    <div class="calc-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 12px;">
+                        <div class="form-group">
+                            <label>Дата начала аренды:</label>
+                            <input type="date" id="book-start-date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Дата возврата:</label>
+                            <input type="date" id="book-end-date" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Ваше ФИО:</label>
+                        <input type="text" id="book-client-name" class="form-control" placeholder="Иванов Иван Иванович" required>
+                    </div>
+
+                    <div class="calc-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 12px;">
+                        <div class="form-group">
+                            <label>Контактный телефон:</label>
+                            <input type="tel" id="book-client-phone" class="form-control" placeholder="+7 (999) 000-00-00" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email для квитанции:</label>
+                            <input type="email" id="book-client-email" class="form-control" placeholder="client@example.com" required>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 14px;">
+                        <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 6px;">Дополнительные услуги:</label>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <label class="checkbox-label" style="font-size: 0.82rem;">
+                                <input type="checkbox" id="book-extra-ins">
+                                <span>Страховка от случайных поломок (15%)</span>
+                            </label>
+                            <label class="checkbox-label" style="font-size: 0.82rem;">
+                                <input type="checkbox" id="book-extra-acc">
+                                <span>Комплект дополнительной защиты и аксессуаров (+300 ₽/сут)</span>
+                            </label>
+                            <label class="checkbox-label" style="font-size: 0.82rem;">
+                                <input type="checkbox" id="book-extra-del">
+                                <span>Курьерская доставка до двери (+700 ₽)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label>Примечание к заказу (необязательно):</label>
+                        <input type="text" id="book-notes" class="form-control" placeholder="Пожелания по времени выдачи...">
+                    </div>
+
+                    <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-sm); padding: 12px; font-size: 0.85rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="color: var(--text-muted);">Период:</span>
+                            <strong id="book-summary-days">1 дн.</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="color: var(--text-muted);">Стоимость проката:</span>
+                            <span id="book-summary-rental">0 ₽</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="color: var(--text-muted);">Дополнительные услуги:</span>
+                            <span id="book-summary-extras">0 ₽</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="color: var(--text-muted);">Возвратный залог:</span>
+                            <span id="book-summary-deposit">0 ₽</span>
+                        </div>
+                        <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 6px; padding-top: 6px; display: flex; justify-content: space-between; font-weight: 700;">
+                            <span>Итого:</span>
+                            <span style="color: var(--accent-emerald);" id="book-summary-total">0 ₽</span>
+                        </div>
+                    </div>
+
+                    <div id="book-avail-warning" style="display: none; color: var(--accent-rose); font-size: 0.82rem; margin-top: 8px; font-weight: 600;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('booking-modal')">Отмена</button>
+                    <button type="submit" id="book-submit-btn" class="btn btn-primary">Подтвердить бронь</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div class="modal-overlay" id="tracking-modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Заказ <span id="track-booking-id" style="color: var(--accent-emerald);">BRN-101</span></h3>
+                <button class="modal-close" onclick="closeModal('tracking-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                    <div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);">Клиент:</div>
+                        <div style="font-weight: 700; font-size: 0.98rem;" id="track-client-name">Иванов Иван</div>
+                    </div>
+                    <div id="track-status-badge" class="status-pill status-active">Активно</div>
+                </div>
+
+                
+                <div class="timeline">
+                    <div class="timeline-step" id="step-pending">
+                        <div class="step-node">1</div>
+                        <div class="step-label">Создано</div>
+                    </div>
+                    <div class="timeline-step" id="step-confirmed">
+                        <div class="step-node">2</div>
+                        <div class="step-label">Подтверждено</div>
+                    </div>
+                    <div class="timeline-step" id="step-active">
+                        <div class="step-node">3</div>
+                        <div class="step-label">Выдано</div>
+                    </div>
+                    <div class="timeline-step" id="step-completed">
+                        <div class="step-node">4</div>
+                        <div class="step-label">Возвращено</div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.3); border: var(--border-glass); border-radius: var(--radius-sm); padding: 14px; font-size: 0.88rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span style="color: var(--text-muted);">Оборудование:</span>
+                        <strong id="track-equipment-title">GT Avalanche</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span style="color: var(--text-muted);">Инвентарный №:</span>
+                        <span id="track-inv-number" style="font-family: monospace; font-weight: 600;">INV-SPT-101</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span style="color: var(--text-muted);">Даты проката:</span>
+                        <span id="track-dates">2026-10-28 — 2026-10-31</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span style="color: var(--text-muted);">Стоимость аренды:</span>
+                        <strong id="track-total-cost">3 600 ₽</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted);">Залог:</span>
+                        <span id="track-deposit">5 000 ₽</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="track-print-btn" class="btn btn-secondary btn-sm">Печать договора и акта</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="closeModal('tracking-modal')">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="modal-overlay" id="auth-modal">
+        <div class="modal-dialog" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>Вход в систему RENTPRO</h3>
+                <button class="modal-close" onclick="closeModal('auth-modal')">&times;</button>
+            </div>
+            <form id="auth-form">
+                <div class="modal-body">
+                    <input type="hidden" id="auth-mode" value="login">
+
+                    <div id="register-extra-fields" style="display: none;">
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <label>Ваше имя / организация:</label>
+                            <input type="text" id="auth-name" class="form-control" placeholder="Иван Иванов">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <label>Номер телефона:</label>
+                            <input type="tel" id="auth-phone" class="form-control" placeholder="+7 (999) 111-22-33">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label>Email адрес:</label>
+                        <input type="email" id="auth-email" class="form-control" placeholder="user@mail.ru" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label>Пароль:</label>
+                        <input type="password" id="auth-password" class="form-control" placeholder="••••••••" required>
+                    </div>
+
+                    <button type="submit" id="auth-submit-btn" class="btn btn-primary" style="width: 100%; margin-bottom: 12px;">
+                        Войти в систему
+                    </button>
+
+                    <div style="text-align: center; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px;" id="auth-toggle-text">
+                        Нет аккаунта? <a href="#" onclick="switchAuthMode('register'); return false;" style="color: var(--accent-emerald);">Зарегистрироваться</a>
+                    </div>
+
+                    
+                    <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 10px;">
+                        <div style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); text-align: center; margin-bottom: 8px;">
+                            Демонстрационный вход:
+                        </div>
+                        <div style="display: flex; gap: 6px; justify-content: center;">
+                            <button type="button" onclick="quickLogin('client')" class="btn btn-secondary btn-sm" style="flex: 1;">Клиент</button>
+                            <button type="button" onclick="quickLogin('manager')" class="btn btn-secondary btn-sm" style="flex: 1;">Менеджер</button>
+                            <button type="button" onclick="quickLogin('admin')" class="btn btn-secondary btn-sm" style="flex: 1;">Админ</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div id="print-area"></div>
+
+    <script src="js/print.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

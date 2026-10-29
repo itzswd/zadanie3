@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рабочее место менеджера — RENTPRO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/print.css">
+</head>
+<body>
+
+    
+    <div class="navbar-wrap">
+        <header class="navbar">
+            <a href="index.html" class="logo">
+                <span class="logo-text">RENT<span>PRO</span></span>
+            </a>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Каталог</a></li>
+                    <li><a href="manager.html" class="active">Менеджер</a></li>
+                    <li id="nav-admin-link" style="display: none;"><a href="admin.html">Админ-панель</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <span style="font-size: 0.82rem; color: var(--text-muted);">Менеджер:</span>
+                <strong id="manager-name-display" style="font-size: 0.86rem; color: var(--accent-emerald);">Иван Сергеев</strong>
+                <a href="cabinet.html" class="btn btn-secondary btn-sm">Кабинет</a>
+                <button onclick="handleLogout()" class="btn btn-secondary btn-sm">Выход</button>
+            </div>
+        </header>
+    </div>
+
+    
+    <main class="dashboard-section">
+        <div class="container">
+            <div class="dashboard-head">
+                <div>
+                    <h1>Пункт выдачи и приёма инвентаря</h1>
+                    <p style="color: var(--text-secondary); margin-top: 2px;">
+                        Оформление выдачи со склада, фиксация состояния и приём возвратов
+                    </p>
+                </div>
+            </div>
+
+            
+            <div class="kpi-grid">
+                <div class="kpi-card amber">
+                    <div class="kpi-info">
+                        <div class="kpi-label">Ожидают подтверждения</div>
+                        <div class="kpi-value" id="kpi-pending">0</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card cyan">
+                    <div class="kpi-info">
+                        <div class="kpi-label">К выдаче со склада</div>
+                        <div class="kpi-value" id="kpi-confirmed">0</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card emerald">
+                    <div class="kpi-info">
+                        <div class="kpi-label">В аренде</div>
+                        <div class="kpi-value" id="kpi-active">0</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card rose">
+                    <div class="kpi-info">
+                        <div class="kpi-label">Просроченные возвраты</div>
+                        <div class="kpi-value" id="kpi-overdue">0</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-filter="all">Все бронирования</button>
+                <button class="tab-btn" data-filter="pending">Ожидают</button>
+                <button class="tab-btn" data-filter="confirmed">К выдаче</button>
+                <button class="tab-btn" data-filter="active">В аренде</button>
+                <button class="tab-btn" data-filter="overdue">Просрочено</button>
+                <button class="tab-btn" data-filter="completed">Возвращено</button>
+            </div>
+
+            
+            <div class="table-card">
+                <div class="table-toolbar">
+                    <input type="text" id="manager-search" class="form-control" style="max-width: 340px; font-size: 0.84rem;" placeholder="Поиск по номеру, клиенту, модели...">
+                </div>
+
+                <div class="data-table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Номер</th>
+                                <th>Клиент</th>
+                                <th>Оборудование</th>
+                                <th>Инв. №</th>
+                                <th>Срок</th>
+                                <th>Аренда / Залог</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="manager-table-body">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    
+    <div class="modal-overlay" id="pickup-modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Выдача оборудования <span id="pickup-modal-id" style="color: var(--accent-emerald);"></span></h3>
+                <button class="modal-close" onclick="closeModal('pickup-modal')">&times;</button>
+            </div>
+            <form id="pickup-form">
+                <div class="modal-body">
+                    <div style="background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 14px; font-size: 0.88rem;">
+                        <div style="margin-bottom: 2px;"><strong>Клиент:</strong> <span id="pickup-modal-client"></span></div>
+                        <div><strong>Модель:</strong> <span id="pickup-modal-equipment" style="color: var(--accent-emerald);"></span></div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label>Свободная единица со склада:</label>
+                        <select id="pickup-unit-select" class="form-control" required></select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label>Состояние при выдаче:</label>
+                        <input type="text" id="pickup-condition-note" class="form-control" value="Оборудование проверено, исправно, дефектов нет">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('pickup-modal')">Отмена</button>
+                    <button type="submit" id="pickup-submit-btn" class="btn btn-primary btn-sm">Подтвердить выдачу</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div class="modal-overlay" id="return-modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Приём инвентаря <span id="return-modal-id" style="color: var(--accent-emerald);"></span></h3>
+                <button class="modal-close" onclick="closeModal('return-modal')">&times;</button>
+            </div>
+            <form id="return-form">
+                <div class="modal-body">
+                    <div style="background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 14px; font-size: 0.86rem;">
+                        <div style="margin-bottom: 2px;"><strong>Арендатор:</strong> <span id="return-modal-client"></span></div>
+                        <div style="margin-bottom: 2px;"><strong>Оборудование:</strong> <span id="return-modal-equipment"></span></div>
+                        <div><strong>Плановый возврат:</strong> <span id="return-modal-planned-end" style="color: var(--accent-cyan); font-weight: 600;"></span></div>
+                    </div>
+
+                    <div class="calc-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 12px;">
+                        <div class="form-group">
+                            <label>Фактическая дата:</label>
+                            <input type="date" id="return-actual-date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Состояние инвентаря:</label>
+                            <select id="return-severity" class="form-control">
+                                <option value="none">Без замечаний</option>
+                                <option value="cleaning">Требуется чистка (+500 ₽)</option>
+                                <option value="minor_damage">Мелкие сколы/царапины (+1 500 ₽)</option>
+                                <option value="major_damage">Поломка механизмов (+3 500 ₽)</option>
+                                <option value="lost">Утрата (удержание залога)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Сумма возмещения ущерба (₽, если требуется):</label>
+                        <input type="number" id="return-custom-fine" class="form-control" value="0" min="0">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label>Заключение менеджера:</label>
+                        <input type="text" id="return-condition-note" class="form-control" value="Инвентарь сдан в исправном состоянии">
+                    </div>
+
+                    
+                    <div class="fine-calc-box">
+                        <div class="fine-calc-row">
+                            <span style="color: var(--text-muted);">Дней задержки:</span>
+                            <span id="ret-calc-late-days" style="font-weight: 600;">0 дн.</span>
+                        </div>
+                        <div class="fine-calc-row">
+                            <span style="color: var(--text-muted);">Штраф за задержку:</span>
+                            <span id="ret-calc-late-fine" style="font-weight: 600; color: var(--accent-rose);">0 ₽</span>
+                        </div>
+                        <div class="fine-calc-row">
+                            <span style="color: var(--text-muted);">Штраф за ущерб:</span>
+                            <span id="ret-calc-damage-fine" style="font-weight: 600; color: var(--accent-rose);">0 ₽</span>
+                        </div>
+                        <div class="fine-calc-row">
+                            <span style="color: var(--text-muted);">Залог:</span>
+                            <span id="ret-calc-deposit" style="font-weight: 600;">0 ₽</span>
+                        </div>
+                        <div class="fine-calc-row fine-calc-total">
+                            <span>Итого удержано:</span>
+                            <span id="ret-calc-total-fines" style="color: var(--accent-rose);">0 ₽</span>
+                        </div>
+                        <div class="fine-calc-row fine-calc-total" style="border-top: none; padding-top: 2px;">
+                            <span>К возврату клиенту:</span>
+                            <span id="ret-calc-refund" style="color: var(--accent-emerald); font-size: 1.15rem;">0 ₽</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('return-modal')">Отмена</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Завершить приём</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div id="print-area"></div>
+
+    
+    <footer class="footer">
+        <div class="container" style="text-align: center;">
+            RENTPRO © 2026
+        </div>
+    </footer>
+
+    <script src="js/print.js"></script>
+    <script src="js/manager.js"></script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет — RENTPRO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/print.css">
+</head>
+<body>
+
+    
+    <div class="navbar-wrap">
+        <header class="navbar">
+            <a href="index.html" class="logo">
+                <span class="logo-text">RENT<span>PRO</span></span>
+            </a>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html#catalog">Каталог</a></li>
+                    <li><a href="index.html#calculator">Калькулятор</a></li>
+                    <li id="nav-manager-link" style="display: none;"><a href="manager.html">Менеджер</a></li>
+                    <li id="nav-admin-link" style="display: none;"><a href="admin.html">Админ-панель</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <button onclick="handleLogout()" class="btn btn-secondary btn-sm">Выход</button>
+            </div>
+        </header>
+    </div>
+
+    
+    <main class="dashboard-section">
+        <div class="container">
+            <div class="dashboard-head">
+                <div>
+                    <h1>Личный кабинет арендатора</h1>
+                    <p style="color: var(--text-secondary); margin-top: 2px;">
+                        <span id="cabinet-user-name" style="color: var(--accent-emerald); font-weight: 600;"></span>
+                        (<span id="cabinet-user-email"></span>, <span id="cabinet-user-phone"></span>)
+                    </p>
+                </div>
+                <a href="index.html#catalog" class="btn btn-primary btn-sm">
+                    + Новое бронирование
+                </a>
+            </div>
+
+            
+            <div class="kpi-grid">
+                <div class="kpi-card emerald">
+                    <div class="kpi-info">
+                        <div class="kpi-label">Всего заказов</div>
+                        <div class="kpi-value" id="stat-total-bookings">0</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card cyan">
+                    <div class="kpi-info">
+                        <div class="kpi-label">Инвентарь на руках</div>
+                        <div class="kpi-value" id="stat-active-rentals">0</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card sky">
+                    <div class="kpi-info">
+                        <div class="kpi-label">Завершено</div>
+                        <div class="kpi-value" id="stat-completed-rentals">0</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card amber">
+                    <div class="kpi-info">
+                        <div class="kpi-label">Сумма оплат</div>
+                        <div class="kpi-value" id="stat-total-spent">0 ₽</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div style="display: flex; gap: 6px; margin-bottom: 16px;">
+                <button class="category-chip cabinet-filter-chip active" data-status="all">Все заказы</button>
+                <button class="category-chip cabinet-filter-chip" data-status="active">В прокате</button>
+                <button class="category-chip cabinet-filter-chip" data-status="pending">Ожидают</button>
+                <button class="category-chip cabinet-filter-chip" data-status="completed">Завершённые</button>
+            </div>
+
+            
+            <div id="cabinet-bookings-list">
+                
+            </div>
+        </div>
+    </main>
+
+    
+    <footer class="footer">
+        <div class="container" style="text-align: center;">
+            RENTPRO © 2026
+        </div>
+    </footer>
+
+    
+    <div id="print-area"></div>
+
+    <script src="js/print.js"></script>
+    <script src="js/cabinet.js"></script>
+</body>
+</html>

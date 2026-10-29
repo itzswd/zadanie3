@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора — RENTPRO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/print.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    
+    <div class="navbar-wrap">
+        <header class="navbar">
+            <a href="index.html" class="logo">
+                <span class="logo-text">RENT<span>PRO</span></span>
+            </a>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Каталог</a></li>
+                    <li><a href="index.html#calculator">Калькулятор</a></li>
+                    <li id="nav-manager-link" style="display: none;"><a href="manager.html">Менеджер</a></li>
+                    <li id="nav-admin-link"><a href="admin.html" class="active">Админ-панель</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <span style="font-size: 0.82rem; color: var(--text-muted);">Администратор:</span>
+                <strong id="admin-name-display" style="font-size: 0.86rem; color: var(--accent-emerald);">Администратор</strong>
+                <a href="cabinet.html" class="btn btn-secondary btn-sm">Кабинет</a>
+                <button onclick="handleLogout()" class="btn btn-secondary btn-sm">Выход</button>
+            </div>
+        </header>
+    </div>
+
+    <main class="dashboard-section">
+        <div class="container">
+            <div class="dashboard-head">
+                <div>
+                    <h1>Панель аналитики и управления RENTPRO</h1>
+                    <p style="color: var(--text-secondary); margin-top: 4px;">
+                        Бизнес-метрики, складской фонд, тарификация штрафов и управление персоналом
+                    </p>
+                </div>
+            </div>
+
+            
+            <div class="kpi-grid">
+                <div class="kpi-card emerald">
+                    <div class="kpi-info">
+                        <div class="kpi-label">Общая выручка</div>
+                        <div class="kpi-value" id="kpi-total-revenue">0 ₽</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card cyan">
+                    <div class="kpi-info">
+                        <div class="kpi-label">Доход от проката</div>
+                        <div class="kpi-value" id="kpi-rental-revenue">0 ₽</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card amber">
+                    <div class="kpi-info">
+                        <div class="kpi-label">Штрафы и неустойки</div>
+                        <div class="kpi-value" id="kpi-fines-revenue">0 ₽</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card sky">
+                    <div class="kpi-info">
+                        <div class="kpi-label">Активных аренд</div>
+                        <div class="kpi-value" id="kpi-active-bookings">0</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card emerald">
+                    <div class="kpi-info">
+                        <div class="kpi-label">Загрузка склада</div>
+                        <div class="kpi-value" id="kpi-utilization-rate">0%</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card rose">
+                    <div class="kpi-info">
+                        <div class="kpi-label">Инвентарь в ТО / Ремонте</div>
+                        <div class="kpi-value" id="kpi-maintenance-units">0</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>Динамика выручки и штрафов</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-revenue"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Спрос по категориям</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-categories"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-grid" style="grid-template-columns: 1fr; margin-bottom: 32px;">
+                <div class="chart-card" style="max-width: 600px; margin: 0 auto; width: 100%;">
+                    <h3 style="justify-content: center;">Состояние складского фонда</h3>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="chart-inventory"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="tab-catalog">Каталог моделей</button>
+                <button class="tab-btn" data-tab="tab-inventory">Складской фонд (Инвентарь)</button>
+                <button class="tab-btn" data-tab="tab-fines">Тарифы и штрафы</button>
+                <button class="tab-btn" data-tab="tab-users">Сотрудники и пользователи</button>
+                <button class="tab-btn" data-tab="tab-bookings">Журнал всех бронирований</button>
+            </div>
+
+            
+            <div class="tab-pane active" id="tab-catalog">
+                <div class="table-card">
+                    <div class="table-toolbar">
+                        <h3>Номенклатура оборудования</h3>
+                        <button onclick="openAddEquipmentModal()" class="btn btn-primary btn-sm">+ Добавить модель</button>
+                    </div>
+                    <div class="data-table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Наименование</th>
+                                    <th>Категория</th>
+                                    <th>Тариф (₽/сут)</th>
+                                    <th>Залог</th>
+                                    <th>Наличие на складе</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-catalog-tbody">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="tab-pane" id="tab-inventory">
+                <div class="table-card" style="margin-bottom: 28px;">
+                    <div class="table-toolbar">
+                        <h3>Физические единицы на складе (Экземпляры инвентаря)</h3>
+                        <button onclick="openAddUnitModal()" class="btn btn-primary btn-sm">+ Оприходовать единицу</button>
+                    </div>
+                    <div class="data-table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Инв. номер</th>
+                                    <th>Серийный №</th>
+                                    <th>Оборудование</th>
+                                    <th>Статус</th>
+                                    <th>Состояние</th>
+                                    <th>Локация</th>
+                                    <th>Сменить статус</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-inventory-tbody">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                
+                <div class="table-card">
+                    <div class="table-toolbar">
+                        <h3>Журнал движения и обслуживания инвентаря</h3>
+                    </div>
+                    <div class="data-table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Время</th>
+                                    <th>Инвентарный №</th>
+                                    <th>Операция</th>
+                                    <th>Подробности</th>
+                                    <th>Исполнитель</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-logs-tbody">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="tab-pane" id="tab-fines">
+                <div class="table-card">
+                    <div class="table-toolbar">
+                        <h3>Прейскурант штрафов и компенсаций за ущерб</h3>
+                    </div>
+                    <div class="data-table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Наименование нарушения</th>
+                                    <th>Категория</th>
+                                    <th>Сумма (₽)</th>
+                                    <th>Правило расчёта</th>
+                                    <th>Описание</th>
+                                    <th>Правка</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-fines-tbody">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="tab-pane" id="tab-users">
+                <div class="table-card">
+                    <div class="table-toolbar">
+                        <h3>Управление аккаунтами и персоналом</h3>
+                        <button onclick="openAddUserModal()" class="btn btn-primary btn-sm">+ Добавить сотрудника</button>
+                    </div>
+                    <div class="data-table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Имя / Организация</th>
+                                    <th>Email</th>
+                                    <th>Телефон</th>
+                                    <th>Текущая роль</th>
+                                    <th>Сменить роль</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-tbody">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="tab-pane" id="tab-bookings">
+                <div class="table-card">
+                    <div class="table-toolbar">
+                        <h3>Реестр всех договоров и броней</h3>
+                    </div>
+                    <div class="data-table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>№ Брони</th>
+                                    <th>Клиент</th>
+                                    <th>Оборудование</th>
+                                    <th>Срок</th>
+                                    <th>Аренда</th>
+                                    <th>Штрафы</th>
+                                    <th>Статус</th>
+                                    <th>Печать</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-bookings-tbody">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    
+    <div class="modal-overlay" id="equipment-modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="equipment-modal-title">Модель оборудования</h3>
+                <button class="modal-close" onclick="closeModal('equipment-modal')">&times;</button>
+            </div>
+            <form id="equipment-form">
+                <div class="modal-body">
+                    <input type="hidden" id="eq-modal-mode" value="create">
+                    <input type="hidden" id="eq-modal-id">
+
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Название модели:</label>
+                        <input type="text" id="eq-form-title" class="form-control" required placeholder="Горный велосипед GT...">
+                    </div>
+
+                    <div class="calc-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 12px;">
+                        <div class="form-group">
+                            <label>Категория:</label>
+                            <select id="eq-form-category" class="form-control">
+                                <option value="Спортивное">Спортивное</option>
+                                <option value="Туристическое">Туристическое</option>
+                                <option value="Строительное">Строительное</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Иконка / изображение:</label>
+                            <input type="text" id="eq-form-image" class="form-control" value="drill.svg" placeholder="bike.svg">
+                        </div>
+                    </div>
+
+                    <div class="calc-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 12px;">
+                        <div class="form-group">
+                            <label>Тариф за сутки (₽):</label>
+                            <input type="number" id="eq-form-rate" class="form-control" required min="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Залоговая стоимость (₽):</label>
+                            <input type="number" id="eq-form-deposit" class="form-control" required min="500">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Описание:</label>
+                        <textarea id="eq-form-desc" class="form-control" rows="2" placeholder="Краткое описание оборудования..."></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Характеристики (JSON):</label>
+                        <textarea id="eq-form-specs" class="form-control" rows="3">{"Мощность": "1200 Вт", "Вес": "5 кг"}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('equipment-modal')">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div class="modal-overlay" id="unit-modal">
+        <div class="modal-dialog" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Оприходование единицы на склад</h3>
+                <button class="modal-close" onclick="closeModal('unit-modal')">&times;</button>
+            </div>
+            <form id="unit-form">
+                <div class="modal-body">
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Модель оборудования:</label>
+                        <select id="unit-form-eq-select" class="form-control" required></select>
+                    </div>
+
+                    <div class="calc-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 12px;">
+                        <div class="form-group">
+                            <label>Инвентарный №:</label>
+                            <input type="text" id="unit-form-code" class="form-control" required placeholder="INV-BLD-501">
+                        </div>
+                        <div class="form-group">
+                            <label>Серийный номер:</label>
+                            <input type="text" id="unit-form-sn" class="form-control" required placeholder="SN-892182">
+                        </div>
+                    </div>
+
+                    <div class="calc-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 12px;">
+                        <div class="form-group">
+                            <label>Начальное состояние:</label>
+                            <input type="text" id="unit-form-cond" class="form-control" value="Новое, отличное">
+                        </div>
+                        <div class="form-group">
+                            <label>Склад / секция:</label>
+                            <input type="text" id="unit-form-loc" class="form-control" value="Склад 1, Секция А">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Примечания к единице:</label>
+                        <input type="text" id="unit-form-notes" class="form-control" placeholder="Поставщик, гарантийный талон...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('unit-modal')">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Оприходовать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div class="modal-overlay" id="user-modal">
+        <div class="modal-dialog" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3>Новый пользователь / сотрудник</h3>
+                <button class="modal-close" onclick="closeModal('user-modal')">&times;</button>
+            </div>
+            <form id="user-form">
+                <div class="modal-body">
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Имя сотрудника / клиента:</label>
+                        <input type="text" id="user-form-name" class="form-control" required placeholder="Иван Сергеев">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Email:</label>
+                        <input type="email" id="user-form-email" class="form-control" required placeholder="sergeev@rentpro.ru">
+                    </div>
+
+                    <div class="calc-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 12px;">
+                        <div class="form-group">
+                            <label>Телефон:</label>
+                            <input type="tel" id="user-form-phone" class="form-control" placeholder="+7 999 000-00-00">
+                        </div>
+                        <div class="form-group">
+                            <label>Роль в системе:</label>
+                            <select id="user-form-role" class="form-control">
+                                <option value="manager">Менеджер</option>
+                                <option value="client">Клиент</option>
+                                <option value="admin">Администратор</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Пароль:</label>
+                        <input type="password" id="user-form-pass" class="form-control" required placeholder="••••••••">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('user-modal')">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Создать аккаунт</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom" style="border-top: none; padding: 20px 0; text-align: center;">
+                <p>RENTPRO &copy; 2026</p>
+            </div>
+        </div>
+    </footer>
+
+    
+    <div id="print-area"></div>
+
+    <script src="js/print.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

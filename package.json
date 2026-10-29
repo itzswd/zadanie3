@@ -1,0 +1,24 @@
+{
+  "name": "equipment-rental",
+  "version": "1.0.0",
+  "description": "Веб-приложение «Прокат оборудования» (бронирование инвентаря, контроль сроков аренды, учёт склада и штрафов)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "equipment",
+    "rental",
+    "inventory",
+    "express",
+    "sqlite",
+    "booking"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
